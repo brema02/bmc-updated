@@ -127,94 +127,159 @@
     <!-- Header End -->
 
     <!-- Signup Start -->
-    <div class="container-xxl py-2 mt-4">
-        <div class="container">
-            <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
-                <center>
-                    <form class="shadow p-4" style="max-width: 550px;" method="POST" action="<?= site_url('inputUser') ?>">
-                        <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
-                            <h1 class="mb-5 bg-white text-center px-3">Daftar</h1>
+<div class="container-xxl py-2 mt-4">
+    <div class="container">
+        <div class="row g-4 wow fadeInUp" data-wow-delay="0.5s">
+            <center>
+                <form class="shadow p-4" style="max-width: 550px;" method="POST" action="<?= site_url('inputUser') ?>">
+                    <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+                        <h1 class="mb-5 bg-white text-center px-3">Daftar</h1>
+                    </div>
+
+                    <!-- Alert untuk Success/Error -->
+                    <?php if (session()->getFlashdata('success')): ?>
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <?= session()->getFlashdata('success') ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                        <div class="row g-3">
+                    <?php endif; ?>
+
+                    <?php if (session()->getFlashdata('error')): ?>
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <?= session()->getFlashdata('error') ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    <?php endif; ?>
+
+                    <div class="row g-3">
                         <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="full_name" name="full_name" placeholder="Full Name">
-                                    <label for="full_name">Nama Lengkap</label>
-                                </div>
+                            <div class="form-floating">
+                                <input type="text" class="form-control <?= isset(session()->getFlashdata('errors')['full_name']) ? 'is-invalid' : '' ?>" 
+                                       id="full_name" name="full_name" placeholder="Full Name" 
+                                       value="<?= session()->getFlashdata('input')['full_name'] ?? old('full_name') ?>">
+                                <label for="full_name">Nama Lengkap</label>
+                                <?php if (isset(session()->getFlashdata('errors')['full_name'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['full_name'] ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
                         </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="username" name="username" placeholder="Username">
-                                    <label for="username">Username</label>
-                                </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control <?= isset(session()->getFlashdata('errors')['username']) ? 'is-invalid' : '' ?>" 
+                                       id="username" name="username" placeholder="Username"
+                                       value="<?= session()->getFlashdata('input')['username'] ?? old('username') ?>">
+                                <label for="username">Username</label>
+                                <?php if (isset(session()->getFlashdata('errors')['username'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['username'] ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="email" class="form-control" id="email" name="email" placeholder="Email Address">
-                                    <label for="email">Email</label>
-                                </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="email" class="form-control <?= isset(session()->getFlashdata('errors')['email']) ? 'is-invalid' : '' ?>" 
+                                       id="email" name="email" placeholder="Email Address"
+                                       value="<?= session()->getFlashdata('input')['email'] ?? old('email') ?>">
+                                <label for="email">Email</label>
+                                <?php if (isset(session()->getFlashdata('errors')['email'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['email'] ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-                                    <label for="password">Password</label>
-                                </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="password" class="form-control <?= isset(session()->getFlashdata('errors')['password']) ? 'is-invalid' : '' ?>" 
+                                       id="password" name="password" placeholder="Password">
+                                <label for="password">Password</label>
+                                <?php if (isset(session()->getFlashdata('errors')['password'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['password'] ?>
+                                    </div>
+                                <?php endif; ?>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                            <select class="form-control" id="role"name="role">
-                                            <option value="Siswa">Siswa</option>
-                                            </select>
-                                        <label for="role">Role</label>
-                                </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-control" id="role" name="role">
+                                    <option value="Siswa" <?= old('role') == 'Siswa' ? 'selected' : '' ?>>Siswa</option>
+                                </select>
+                                <label for="role">Role</label>
                             </div>
-                            <div class="col-12">
-                                <div class="form-floating">
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
                                 <?php
                                 use CodeIgniter\I18n\Time;
                                 $currentTime = Time::now('Asia/Jakarta');
                                 $currentDate = $currentTime->toDateString();
                                 ?>
-
-                                    <input type="date" class="form-control" id="birthdate" name="date_birth" value="<?= $currentDate ?>">
-                                    <label for="birtdate">Tanggal Lahir</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                            <select class="form-control" id="gender"name="gender">
-                                            <option value="Laki-Laki">Laki-Laki</option>
-                                            <option value="Perempuan">Perempuan</option>
-                                            </select>
-                                        <label for="role">Jenis Kelamin</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="phone" name="phone" placeholder="phone">
-                                    <label for="phone">Nomor Telepon</label>
-                                </div>
-                            </div>
-                            <div class="col-12">
-                                <div class="form-floating">
-                                    <input type="text" class="form-control" id="address" name="address" placeholder="address">
-                                    <label for="address">Alamat</label>
-                                </div>
-                            </div>
-
-                            <div class="col-12">
-                                <button class="btn text-light w-100 py-3" type="submit">Daftar</button>
-                            </div>
-
-                            <div class="col-12 text-center">
-                                <p>Sudah punya Akun? <a class="text-decoration-none" href="<?= site_url('login') ?>">Login</a></p>
+                                <input type="date" class="form-control" id="birthdate" name="date_birth" 
+                                       value="<?= old('date_birth') ?: $currentDate ?>">
+                                <label for="birthdate">Tanggal Lahir</label>
                             </div>
                         </div>
-                    </form>
-                </center>
-            </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <select class="form-control" id="gender" name="gender">
+                                    <option value="Laki-Laki" <?= old('gender') == 'Laki-Laki' ? 'selected' : '' ?>>Laki-Laki</option>
+                                    <option value="Perempuan" <?= old('gender') == 'Perempuan' ? 'selected' : '' ?>>Perempuan</option>
+                                </select>
+                                <label for="role">Jenis Kelamin</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control <?= isset(session()->getFlashdata('errors')['phone']) ? 'is-invalid' : '' ?>" 
+                                       id="phone" name="phone" placeholder="phone"
+                                       value="<?= old('phone') ?>">
+                                <label for="phone">Nomor Telepon</label>
+                                <?php if (isset(session()->getFlashdata('errors')['phone'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['phone'] ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control <?= isset(session()->getFlashdata('errors')['address']) ? 'is-invalid' : '' ?>" 
+                                       id="address" name="address" placeholder="address"
+                                       value="<?= old('address') ?>">
+                                <label for="address">Alamat</label>
+                                <?php if (isset(session()->getFlashdata('errors')['address'])): ?>
+                                    <div class="invalid-feedback">
+                                        <?= session()->getFlashdata('errors')['address'] ?>
+                                    </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <button class="btn text-light w-100 py-3" type="submit">Daftar</button>
+                        </div>
+
+                        <div class="col-12 text-center">
+                            <p>Sudah punya Akun? <a class="text-decoration-none" href="<?= site_url('login') ?>">Login</a></p>
+                        </div>
+                    </div>
+                </form>
+            </center>
         </div>
     </div>
+</div>
     <!-- Signup End -->
 
     <!-- Footer Start -->
