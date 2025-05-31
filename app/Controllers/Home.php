@@ -69,9 +69,10 @@ class Home extends BaseController
         return password_verify($password, $hashedPassword);
     }
 
-    public function inputUser()
+public function inputUser()
     {
         $session = session();
+        $userModel = new UserModel(); // Inisialisasi langsung di method
         
         // Validasi input
         $validation = \Config\Services::validation();
@@ -125,7 +126,7 @@ class Home extends BaseController
         }
 
         // Cek manual apakah nama lengkap sudah ada
-        $existingFullName = $this->userModel->where('full_name', $this->request->getPost('full_name'))->first();
+        $existingFullName = $userModel->where('full_name', $this->request->getPost('full_name'))->first();
         if ($existingFullName) {
             $session->setFlashdata('error', 'Nama lengkap "' . $this->request->getPost('full_name') . '" sudah terdaftar. Silakan gunakan nama lain.');
             $session->setFlashdata('input', $this->request->getPost());
@@ -133,7 +134,7 @@ class Home extends BaseController
         }
 
         // Cek manual apakah alamat sudah ada
-        $existingAddress = $this->userModel->where('address', $this->request->getPost('address'))->first();
+        $existingAddress = $userModel->where('address', $this->request->getPost('address'))->first();
         if ($existingAddress) {
             $session->setFlashdata('error', 'Alamat "' . $this->request->getPost('address') . '" sudah terdaftar. Silakan periksa kembali alamat Anda.');
             $session->setFlashdata('input', $this->request->getPost());
@@ -141,7 +142,7 @@ class Home extends BaseController
         }
 
         // Cek manual apakah nomor telepon sudah ada
-        $existingPhone = $this->userModel->where('phone', $this->request->getPost('phone'))->first();
+        $existingPhone = $userModel->where('phone', $this->request->getPost('phone'))->first();
         if ($existingPhone) {
             $session->setFlashdata('error', 'Nomor telepon "' . $this->request->getPost('phone') . '" sudah terdaftar. Silakan gunakan nomor lain.');
             $session->setFlashdata('input', $this->request->getPost());
@@ -149,14 +150,14 @@ class Home extends BaseController
         }
 
         // Cek manual apakah username atau email sudah ada
-        $existingUser = $this->userModel->where('username', $this->request->getPost('username'))->first();
+        $existingUser = $userModel->where('username', $this->request->getPost('username'))->first();
         if ($existingUser) {
             $session->setFlashdata('error', 'Username "' . $this->request->getPost('username') . '" sudah terdaftar. Silakan gunakan username lain.');
             $session->setFlashdata('input', $this->request->getPost());
             return redirect()->back();
         }
 
-        $existingEmail = $this->userModel->where('email', $this->request->getPost('email'))->first();
+        $existingEmail = $userModel->where('email', $this->request->getPost('email'))->first();
         if ($existingEmail) {
             $session->setFlashdata('error', 'Email "' . $this->request->getPost('email') . '" sudah terdaftar. Silakan gunakan email lain.');
             $session->setFlashdata('input', $this->request->getPost());
@@ -177,12 +178,12 @@ class Home extends BaseController
             'boleh_ujian'=> 0 // Default tidak boleh ujian untuk siswa baru
         ];
 
-        if ($this->userModel->insert($data)) {
+        if ($userModel->insert($data)) {
             $session->setFlashdata('success', 'Pendaftaran berhasil! Silakan login.');
             return redirect()->to(site_url('login'));
         } else {
             // Cek apakah error karena duplicate entry
-            $error = $this->userModel->errors();
+            $error = $userModel->errors();
             if (!empty($error)) {
                 // Jika ada error dari model validation
                 $session->setFlashdata('errors', $error);
@@ -194,7 +195,6 @@ class Home extends BaseController
             return redirect()->back();
         }
     }
-
     public function infocourses()
     {
         $produkModel = new ProdukModel();
